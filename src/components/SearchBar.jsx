@@ -1,53 +1,17 @@
 import React, { useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
-import styled from 'styled-components';
-
-const SearchForm = styled.form`
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 0.75rem 1rem;
-  padding-right: 3rem;
-  border: 1px solid var(--medium-gray);
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: all 0.3s;
-  
-  &:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
-  }
-`;
-
-const SearchButton = styled.button`
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  padding: 0 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.3s;
-  
-  &:hover {
-    color: var(--secondary-color);
-  }
-`;
+import { Search as SearchIcon } from '@mui/icons-material';
+import { 
+  InputBase, 
+  IconButton, 
+  Paper, 
+  Box,
+  alpha,
+  useTheme
+} from '@mui/material';
 
 const SearchBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const theme = useTheme();
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,17 +21,54 @@ const SearchBar = ({ onSearch }) => {
   };
   
   return (
-    <SearchForm onSubmit={handleSubmit}>
-      <SearchInput
-        type="text"
-        placeholder="Search products..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <SearchButton type="submit">
-        <FiSearch size={18} />
-      </SearchButton>
-    </SearchForm>
+    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 400 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: '2px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          border: `1px solid ${alpha(theme.palette.text.primary, 0.23)}`,
+          borderRadius: theme.shape.borderRadius,
+          transition: 'all 0.3s',
+          '&:hover': {
+            borderColor: theme.palette.primary.main,
+          },
+          '&:focus-within': {
+            borderColor: theme.palette.primary.main,
+            boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+          }
+        }}
+      >
+        <InputBase
+          sx={{ 
+            ml: 1,
+            flex: 1,
+            '& .MuiInputBase-input': {
+              py: 1
+            }
+          }}
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          inputProps={{ 'aria-label': 'search products' }}
+        />
+        <IconButton 
+          type="submit" 
+          sx={{ 
+            p: '10px',
+            color: theme.palette.primary.main,
+            '&:hover': {
+              color: theme.palette.secondary.main,
+              backgroundColor: 'transparent'
+            } 
+          }} 
+          aria-label="search"
+        >
+          <SearchIcon />
+        </IconButton>
+      </Paper>
+    </Box>
   );
 };
 

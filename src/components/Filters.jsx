@@ -1,94 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import styled from 'styled-components';
-import { OutlineButton, Select, Input } from '../styles/StyledComponents';
-
-const FiltersContainer = styled.div`
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: var(--box-shadow);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-`;
-
-const FiltersHeader = styled.div`
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: ${props => props.isOpen ? '1px solid var(--border-color)' : 'none'};
-  cursor: pointer;
-  user-select: none;
-  color: var(--text-color);
-`;
-
-const FiltersTitle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  
-  svg {
-    color: var(--primary-color);
-  }
-`;
-
-const FiltersBody = styled.div`
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FiltersSection = styled.div`
-  h4 {
-    margin-bottom: 0.75rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--text-color);
-  }
-`;
-
-const PriceContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  span {
-    color: var(--dark-gray);
-  }
-`;
-
-const PriceInput = styled(Input)`
-  width: 100%;
-`;
-
-const RatingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  
-  input[type="range"] {
-    width: 100%;
-    accent-color: var(--primary-color);
-  }
-  
-  span {
-    font-size: 0.875rem;
-    color: var(--text-color);
-  }
-`;
-
-const ResetButton = styled(OutlineButton)`
-  width: 100%;
-  margin-top: 1rem;
-`;
+import { 
+  FilterAlt, 
+  ExpandMore, 
+  ExpandLess 
+} from '@mui/icons-material';
+import {
+  Paper,
+  Typography,
+  Box,
+  IconButton,
+  Collapse,
+  Divider,
+  MenuItem,
+  Select as MuiSelect,
+  FormControl,
+  InputLabel,
+  TextField,
+  Slider,
+  Button,
+  useTheme
+} from '@mui/material';
 
 const Filters = ({ categories, onFilterChange, onSearch }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [rating, setRating] = useState(0);
+  const theme = useTheme();
   
   useEffect(() => {
     if (onFilterChange) {
@@ -111,8 +49,8 @@ const Filters = ({ categories, onFilterChange, onSearch }) => {
     });
   };
   
-  const handleRatingChange = (e) => {
-    setRating(Number(e.target.value));
+  const handleRatingChange = (e, newValue) => {
+    setRating(newValue);
   };
   
   const toggleFilters = () => {
@@ -126,76 +64,121 @@ const Filters = ({ categories, onFilterChange, onSearch }) => {
   };
   
   return (
-    <FiltersContainer>
-      <FiltersHeader isOpen={isOpen} onClick={toggleFilters}>
-        <FiltersTitle>
-          <FiFilter />
-          <span>Filters</span>
-        </FiltersTitle>
-        {isOpen ? <FiChevronUp /> : <FiChevronDown />}
-      </FiltersHeader>
+    <Paper 
+      elevation={1} 
+      sx={{ 
+        borderRadius: 2, 
+        overflow: 'hidden',
+        mb: 3
+      }}
+    >
+      <Box 
+        sx={{ 
+          p: 2, 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          cursor: 'pointer',
+          borderBottom: isOpen ? 1 : 0,
+          borderColor: 'divider'
+        }}
+        onClick={toggleFilters}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <FilterAlt color="primary" />
+          <Typography variant="subtitle1" fontWeight={500}>
+            Filters
+          </Typography>
+        </Box>
+        {isOpen ? <ExpandLess color="action" /> : <ExpandMore color="action" />}
+      </Box>
       
-      {isOpen && (
-        <FiltersBody>
-          <FiltersSection>
-            <h4>Category</h4>
-            <Select 
-              value={selectedCategory} 
-              onChange={handleCategoryChange}
-            >
-              <option value="">All categories</option>
-              {categories && categories.map(category => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Select>
-          </FiltersSection>
+      <Collapse in={isOpen}>
+        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+              Category
+            </Typography>
+            <FormControl fullWidth variant="outlined" size="small">
+              <InputLabel id="category-select-label">Category</InputLabel>
+              <MuiSelect
+                labelId="category-select-label"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                label="Category"
+              >
+                <MenuItem value="">All categories</MenuItem>
+                {categories && categories.map(category => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </MuiSelect>
+            </FormControl>
+          </Box>
           
-          <FiltersSection>
-            <h4>Price</h4>
-            <PriceContainer>
-              <PriceInput
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+              Price
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <TextField
                 type="number"
                 name="min"
-                placeholder="From"
+                label="From"
                 value={priceRange.min}
                 onChange={handlePriceChange}
-                min={0}
+                inputProps={{ min: 0 }}
+                size="small"
+                variant="outlined"
+                fullWidth
               />
-              <span>—</span>
-              <PriceInput
+              <Box sx={{ color: 'text.secondary' }}>—</Box>
+              <TextField
                 type="number"
                 name="max"
-                placeholder="To"
+                label="To"
                 value={priceRange.max}
                 onChange={handlePriceChange}
-                min={priceRange.min}
+                inputProps={{ min: priceRange.min }}
+                size="small"
+                variant="outlined"
+                fullWidth
               />
-            </PriceContainer>
-          </FiltersSection>
+            </Box>
+          </Box>
           
-          <FiltersSection>
-            <h4>Rating</h4>
-            <RatingContainer>
-              <input
-                type="range"
-                min="0"
-                max="5"
-                step="0.5"
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+              Rating
+            </Typography>
+            <Box sx={{ px: 1 }}>
+              <Slider
+                min={0}
+                max={5}
+                step={0.5}
                 value={rating}
                 onChange={handleRatingChange}
+                valueLabelDisplay="auto"
+                aria-labelledby="rating-slider"
               />
-              <span>{rating > 0 ? `${rating} and above` : 'Any'}</span>
-            </RatingContainer>
-          </FiltersSection>
+              <Typography variant="body2" color="text.secondary">
+                {rating > 0 ? `${rating} and above` : 'Any'}
+              </Typography>
+            </Box>
+          </Box>
           
-          <ResetButton onClick={resetFilters}>
+          <Button 
+            variant="outlined" 
+            onClick={resetFilters}
+            fullWidth
+            sx={{ mt: 1 }}
+          >
             Reset filters
-          </ResetButton>
-        </FiltersBody>
-      )}
-    </FiltersContainer>
+          </Button>
+        </Box>
+      </Collapse>
+    </Paper>
   );
 };
 

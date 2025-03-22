@@ -1,139 +1,197 @@
-import React from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { FiShoppingCart, FiUser, FiMoon, FiSun } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { Link as RouterLink, NavLink as RouterNavLink, useLocation } from 'react-router-dom';
+import { ShoppingCart, Person, DarkMode, LightMode, Menu, Close } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import SearchBar from './SearchBar';
-import styled from 'styled-components';
-import { Container } from '../styles/StyledComponents';
-
-const HeaderWrapper = styled.header`
-  background-color: var(--header-bg);
-  box-shadow: var(--box-shadow);
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: background-color 0.3s ease;
-`;
-
-const HeaderContainer = styled(Container)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const Logo = styled(Link)`
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  text-decoration: none;
-  font-family: var(--font-headings);
-  letter-spacing: -0.03em;
-  
-  &:hover {
-    color: var(--secondary-color);
-  }
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  font-family: var(--font-primary);
-  font-weight: 500;
-`;
-
-const StyledNavLink = styled(NavLink)`
-  color: var(--text-color);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  position: relative;
-  font-weight: 500;
-  transition: color 0.2s ease;
-  
-  &.active {
-    color: var(--primary-color);
-  }
-  
-  &:hover {
-    color: var(--primary-color);
-  }
-`;
-
-const CartCount = styled.span`
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: var(--secondary-color);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-`;
-
-const ThemeToggle = styled.button`
-  background: none;
-  border: none;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.25rem;
-  margin-right: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-  
-  &:hover {
-    background-color: var(--light-gray);
-  }
-`;
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  Box,
+  IconButton,
+  Badge,
+  Button,
+  useTheme as useMuiTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemIcon,
+  useMediaQuery
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 const Header = () => {
   const { totalCount } = useCart();
   const { isDarkMode, toggleTheme } = useTheme();
   const location = useLocation();
-  
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const navItems = [
+    { text: 'Home', path: '/', icon: null },
+    { text: 'Profile', path: '/auth', icon: <Person /> },
+    { text: 'Cart', path: '/cart', icon: <ShoppingCart /> }
+  ];
+
+  const NavLink = ({ to, children, ...props }) => (
+    <Button
+      component={RouterNavLink}
+      to={to}
+      sx={{
+        color: 'text.primary',
+        fontWeight: 500,
+        textTransform: 'none',
+        '&.active': {
+          color: 'primary.main',
+        },
+        '&:hover': {
+          color: 'primary.main',
+          backgroundColor: 'transparent'
+        }
+      }}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+
+  const mobileMenu = (
+    <Drawer
+      anchor="right"
+      open={drawerOpen}
+      onClose={toggleDrawer}
+      PaperProps={{
+        sx: {
+          width: 240,
+          backgroundColor: 'background.default'
+        }
+      }}
+    >
+      <Box sx={{ textAlign: 'right', p: 1 }}>
+        <IconButton onClick={toggleDrawer} size="large">
+          <Close />
+        </IconButton>
+      </Box>
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <ListItemButton
+              component={RouterNavLink}
+              to={item.path}
+              onClick={toggleDrawer}
+              sx={{
+                '&.active': {
+                  backgroundColor: alpha(muiTheme.palette.primary.main, 0.1),
+                  color: 'primary.main',
+                }
+              }}
+            >
+              {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+              <ListItemText primary={item.text} />
+              {item.path === '/cart' && totalCount > 0 && (
+                <Badge badgeContent={totalCount} color="secondary" sx={{ ml: 1 }} />
+              )}
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={toggleTheme}>
+            <ListItemIcon>
+              {isDarkMode ? <LightMode /> : <DarkMode />}
+            </ListItemIcon>
+            <ListItemText primary={isDarkMode ? "Light Mode" : "Dark Mode"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Drawer>
+  );
+
   return (
-    <HeaderWrapper>
-      <HeaderContainer>
-        <Logo to="/">
-          MegaMarket
-        </Logo>
-        
-        {location.pathname === '/' && <SearchBar />}
-        
-        <Nav>
-          <ThemeToggle onClick={toggleTheme} title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}>
-            {isDarkMode ? <FiSun /> : <FiMoon />}
-          </ThemeToggle>
+    <AppBar position="sticky" color="default" elevation={2} sx={{ backgroundColor: 'background.paper' }}>
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
+          <Typography
+            variant="h5"
+            component={RouterLink}
+            to="/"
+            sx={{
+              fontFamily: 'var(--font-headings)',
+              fontWeight: 700,
+              color: 'primary.main',
+              textDecoration: 'none',
+              letterSpacing: '-0.03em',
+              '&:hover': {
+                color: 'secondary.main'
+              }
+            }}
+          >
+            MegaMarket
+          </Typography>
           
-          <StyledNavLink to="/" end>
-            Home
-          </StyledNavLink>
-          <StyledNavLink to="/auth">
-            <FiUser size={20} />
-          </StyledNavLink>
-          <StyledNavLink to="/cart">
-            <FiShoppingCart size={20} />
-            {totalCount > 0 && <CartCount>{totalCount}</CartCount>}
-          </StyledNavLink>
-        </Nav>
-      </HeaderContainer>
-    </HeaderWrapper>
+          {location.pathname === '/' && !isMobile && (
+            <Box sx={{ flexGrow: 1, mx: 3 }}>
+              <SearchBar />
+            </Box>
+          )}
+
+          {!isMobile ? (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton
+                onClick={toggleTheme}
+                sx={{ color: 'text.primary', mr: 1 }}
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDarkMode ? <LightMode /> : <DarkMode />}
+              </IconButton>
+              
+              <NavLink to="/" end>
+                Home
+              </NavLink>
+              
+              <NavLink to="/auth">
+                <Person />
+              </NavLink>
+              
+              <NavLink to="/cart">
+                <Badge badgeContent={totalCount > 0 ? totalCount : null} color="secondary">
+                  <ShoppingCart />
+                </Badge>
+              </NavLink>
+            </Box>
+          ) : (
+            <>
+              <Box sx={{ display: 'flex' }}>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={toggleDrawer}
+                >
+                  <Menu />
+                </IconButton>
+              </Box>
+              {mobileMenu}
+            </>
+          )}
+        </Toolbar>
+        
+        {location.pathname === '/' && isMobile && (
+          <Box sx={{ pb: 2 }}>
+            <SearchBar />
+          </Box>
+        )}
+      </Container>
+    </AppBar>
   );
 };
 

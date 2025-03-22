@@ -7,7 +7,7 @@ Modern e-commerce project built with React and Vite, featuring a clean design, r
 - React 18
 - Vite
 - React Router v6
-- Styled Components
+- Material UI (MUI)
 - React Icons
 - Framer Motion for animations
 - Formik + Yup for form validation
@@ -21,12 +21,12 @@ Modern e-commerce project built with React and Vite, featuring a clean design, r
 - Shopping cart with add/remove functionality
 - Detailed product pages
 - Checkout process with form validation
-- Dark/Light theme toggle
+- Dark/Light theme toggle with MUI ThemeProvider
 - Responsive design with mobile support
 - Smooth page transitions and micro-interactions
 - Custom typography with Google Fonts
-- Custom styled scrollbars
 - Multiple information pages (About, Contact, Blog, etc.)
+- Lazy loading with React.lazy and Suspense
 
 ## Installation and Setup
 
@@ -68,10 +68,11 @@ npm run build
 ## Key Features Implemented
 
 ### UI/UX Enhancements
-- **Theme Toggle**: Switch between light and dark themes
+- **Material UI Components**: Modern and accessible UI components
+- **Theme Toggle**: Switch between light and dark themes using MUI ThemeProvider
 - **Animations**: Page transitions, hover effects, and micro-interactions
 - **Typography**: Custom fonts and improved readability
-- **Responsive Design**: Optimized for all screen sizes
+- **Responsive Design**: Optimized for all screen sizes using MUI Grid system
 
 ### Functionality
 - **Product Catalog**: Browse and filter products
@@ -82,9 +83,9 @@ npm run build
 
 ### Technical Improvements
 - **Context API**: For state management across components
-- **Styled Components**: For component-specific styling
-- **CSS Variables**: For theme consistency
-- **Performance Optimization**: Lazy loading and code splitting
+- **Material UI**: For component-specific styling and theming
+- **Code Splitting**: Lazy loading with React.lazy and Suspense
+- **Performance Optimization**: Efficient rendering and bundle size management
 
 ## Future Development
 

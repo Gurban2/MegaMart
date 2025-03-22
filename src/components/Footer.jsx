@@ -1,136 +1,182 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FiFacebook, FiInstagram, FiTwitter } from 'react-icons/fi';
-import styled from 'styled-components';
-import { Container } from '../styles/StyledComponents';
-
-const FooterWrapper = styled.footer`
-  background-color: var(--footer-bg);
-  padding: 3rem 0 1rem;
-  margin-top: 2rem;
-`;
-
-const FooterContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-  
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const FooterSection = styled.div`
-  h3 {
-    font-family: var(--font-headings);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-family: var(--font-primary);
-  }
-  
-  li {
-    margin-bottom: 0.5rem;
-  }
-  
-  a {
-    color: var(--dark-gray);
-    text-decoration: none;
-    transition: color 0.3s;
-    font-size: 0.95rem;
-    
-    &:hover {
-      color: var(--primary-color);
-    }
-  }
-`;
-
-const SocialLinks = styled.div`
-  display: flex;
-  gap: 1rem;
-  
-  a {
-    color: var(--dark-gray);
-    transition: color 0.3s;
-    
-    &:hover {
-      color: var(--primary-color);
-    }
-  }
-`;
-
-const Copyright = styled.div`
-  text-align: center;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
-  color: var(--dark-gray);
-  font-size: 0.9rem;
-  font-family: var(--font-primary);
-`;
+import { Link as RouterLink } from 'react-router-dom';
+import { Facebook, Instagram, Twitter } from '@mui/icons-material';
+import { 
+  Box, 
+  Container as MuiContainer, 
+  Typography, 
+  Grid, 
+  List, 
+  ListItem, 
+  Link, 
+  IconButton,
+  Divider,
+  useTheme
+} from '@mui/material';
 
 const Footer = () => {
+  const theme = useTheme();
+  const currentYear = new Date().getFullYear();
+  
+  const footerSections = [
+    {
+      title: "Company",
+      links: [
+        { name: "About Us", path: "/about" },
+        { name: "Contact", path: "/contact" },
+        { name: "Blog", path: "/blog" },
+        { name: "Careers", path: "/careers" },
+      ]
+    },
+    {
+      title: "For Customers",
+      links: [
+        { name: "Catalog", path: "/" },
+        { name: "How to Order", path: "/how-to-order" },
+        { name: "Payment Methods", path: "/payment" },
+        { name: "Delivery", path: "/delivery" },
+      ]
+    }
+  ];
+  
+  const contactInfo = [
+    "Phone: +1 (123) 456-7890",
+    "Email: info@megamarket.com",
+    "Address: 123 Main St, New York, NY"
+  ];
+  
+  const socialLinks = [
+    { icon: <Facebook />, url: "https://facebook.com", label: "Facebook" },
+    { icon: <Instagram />, url: "https://instagram.com", label: "Instagram" },
+    { icon: <Twitter />, url: "https://twitter.com", label: "Twitter" }
+  ];
+  
   return (
-    <FooterWrapper>
-      <Container>
-        <FooterContainer>
-          <FooterSection>
-            <h3>Company</h3>
-            <ul>
-              <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
-              <li><Link to="/blog">Blog</Link></li>
-              <li><Link to="/careers">Careers</Link></li>
-            </ul>
-          </FooterSection>
+    <Box 
+      component="footer" 
+      sx={{ 
+        bgcolor: 'background.paper',
+        py: 6,
+        mt: 4,
+        borderTop: 1,
+        borderColor: 'divider'
+      }}
+    >
+      <MuiContainer maxWidth="lg">
+        <Grid container spacing={4} sx={{ mb: 4 }}>
+          {footerSections.map((section, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                sx={{ 
+                  mb: 2,
+                  fontWeight: 600,
+                  fontFamily: theme.typography.h1.fontFamily,
+                }}
+              >
+                {section.title}
+              </Typography>
+              <List disablePadding>
+                {section.links.map((link, linkIndex) => (
+                  <ListItem disablePadding key={linkIndex} sx={{ mb: 0.5 }}>
+                    <Link 
+                      component={RouterLink} 
+                      to={link.path}
+                      underline="hover"
+                      color="text.secondary"
+                      sx={{ 
+                        fontSize: '0.95rem',
+                        transition: 'color 0.3s',
+                        '&:hover': {
+                          color: 'primary.main'
+                        }
+                      }}
+                    >
+                      {link.name}
+                    </Link>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+          ))}
           
-          <FooterSection>
-            <h3>For Customers</h3>
-            <ul>
-              <li><Link to="/">Catalog</Link></li>
-              <li><Link to="/how-to-order">How to Order</Link></li>
-              <li><Link to="/payment">Payment Methods</Link></li>
-              <li><Link to="/delivery">Delivery</Link></li>
-            </ul>
-          </FooterSection>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography 
+              variant="h6" 
+              component="h3" 
+              sx={{ 
+                mb: 2,
+                fontWeight: 600,
+                fontFamily: theme.typography.h1.fontFamily,
+              }}
+            >
+              Contact
+            </Typography>
+            <List disablePadding>
+              {contactInfo.map((info, index) => (
+                <ListItem disablePadding key={index} sx={{ mb: 0.5 }}>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                    sx={{ fontSize: '0.95rem' }}
+                  >
+                    {info}
+                  </Typography>
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
           
-          <FooterSection>
-            <h3>Contact</h3>
-            <ul>
-              <li>Phone: +1 (123) 456-7890</li>
-              <li>Email: info@megamarket.com</li>
-              <li>Address: 123 Main St, New York, NY</li>
-            </ul>
-          </FooterSection>
-          
-          <FooterSection>
-            <h3>Social Media</h3>
-            <SocialLinks>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                <FiFacebook size={24} />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <FiInstagram size={24} />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                <FiTwitter size={24} />
-              </a>
-            </SocialLinks>
-          </FooterSection>
-        </FooterContainer>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography 
+              variant="h6" 
+              component="h3" 
+              sx={{ 
+                mb: 2,
+                fontWeight: 600,
+                fontFamily: theme.typography.h1.fontFamily,
+              }}
+            >
+              Social Media
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {socialLinks.map((social, index) => (
+                <IconButton 
+                  key={index}
+                  component="a"
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  color="primary"
+                  sx={{ 
+                    color: 'text.secondary',
+                    '&:hover': {
+                      color: 'primary.main',
+                      bgcolor: 'transparent'
+                    }
+                  }}
+                >
+                  {social.icon}
+                </IconButton>
+              ))}
+            </Box>
+          </Grid>
+        </Grid>
         
-        <Copyright>
-          &copy; {new Date().getFullYear()} MegaMarket. All rights reserved.
-        </Copyright>
-      </Container>
-    </FooterWrapper>
+        <Divider sx={{ my: 3 }} />
+        
+        <Typography 
+          variant="body2" 
+          color="text.secondary" 
+          align="center"
+          sx={{ pt: 2 }}
+        >
+          &copy; {currentYear} MegaMarket. All rights reserved.
+        </Typography>
+      </MuiContainer>
+    </Box>
   );
 };
 
